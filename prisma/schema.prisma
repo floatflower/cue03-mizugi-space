@@ -1,0 +1,97 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/server/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id                    String      @id
+  locale                String      @default("zh-TW") @map("locale")
+  password              String?
+  lastLoginAt           DateTime?   @map("last_login_at")
+  email                 String?     @unique
+  emailVerifiedAt       DateTime?   @map("email_verified_at")
+  phoneNumber           String?     @map("phone_number")
+  phoneNumberVerifiedAt DateTime?   @map("phone_number_verified_at")
+  gender                GenderType? @map("gender")
+  birthday              DateTime?   @map("birthday")
+  country               String?     @map("country")
+  createdAt             DateTime    @default(now()) @map("created_at")
+  updatedAt             DateTime    @updatedAt @map("updated_at")
+  userOAuths            UserOAuth[]
+
+  @@map("user")
+}
+
+model UserOAuth {
+  id        String            @id
+  oauthId   String            @unique @map("oauth_id")
+  userId    String            @map("user_id")
+  user      User              @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  provider  OAuthProviderType @map("provider")
+  createdAt DateTime          @default(now()) @map("created_at")
+  updatedAt DateTime          @updatedAt @map("updated_at")
+
+  @@unique([userId, provider])
+  @@map("user_oauth")
+}
+
+enum OAuthProviderType {
+  GOOGLE
+  LINE
+}
+
+enum GenderType {
+  MALE
+  FEMALE
+  OTHER
+}
+
+model Session {
+  id                   String                @id
+  date                 String                @map("date")
+  startTime            String                @map("start_time")
+  endTime              String                @map("end_time")
+  capacity             Int                   @default(6) @map("capacity")
+  createdAt            DateTime              @default(now()) @map("created_at")
+  updatedAt            DateTime              @updatedAt @map("updated_at")
+  registrationSessions RegistrationSession[]
+
+  @@map("session")
+}
+
+model Registration {
+  id                   String                @id
+  name                 String                @map("name")
+  phone                String                @map("phone")
+  email                String                @map("email")
+  amount               Int                   @map("amount")
+  status               RegistrationStatus    @default(PENDING) @map("status")
+  createdAt            DateTime              @default(now()) @map("created_at")
+  updatedAt            DateTime              @updatedAt @map("updated_at")
+  registrationSessions RegistrationSession[]
+
+  @@map("registration")
+}
+
+model RegistrationSession {
+  id             String       @id
+  registrationId String       @map("registration_id")
+  registration   Registration @relation(fields: [registrationId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  sessionId      String       @map("session_id")
+  session        Session      @relation(fields: [sessionId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  createdAt      DateTime     @default(now()) @map("created_at")
+  updatedAt      DateTime     @updatedAt @map("updated_at")
+
+  @@unique([registrationId, sessionId])
+  @@map("registration_session")
+}
+
+enum RegistrationStatus {
+  PENDING
+  PAID
+  FAILED
+}

@@ -1,0 +1,18 @@
+{
+  "common": {
+    "submit": "Submit",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "close": "Close",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "back": "Back",
+    "loading": "Loading"
+  },
+  "auth": {
+    "login": "Login",
+    "logout": "Logout",
+    "register": "Register"
+  }
+}

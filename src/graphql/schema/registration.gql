@@ -1,0 +1,35 @@
+type Session {
+  id: ID!
+  date: String!
+  startTime: String!
+  endTime: String!
+  capacity: Int!
+  registeredCount: Int!
+  available: Int!
+}
+
+type NewebPayData {
+  merchantId: String!
+  tradeInfo: String!
+  tradeSha: String!
+}
+
+type CreateRegistrationResult {
+  registrationId: ID!
+  payment: NewebPayData!
+}
+
+input CreateRegistrationData {
+  name: String!
+  phone: String!
+  email: String!
+  sessionIds: [ID!]!
+}
+
+extend type Query {
+  sessions: [Session!]!
+}
+
+extend type Mutation {
+  createRegistration(data: CreateRegistrationData!): CreateRegistrationResult!
+}

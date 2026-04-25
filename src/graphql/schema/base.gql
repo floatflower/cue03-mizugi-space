@@ -1,0 +1,8 @@
+directive @datetime(format: String = "YYYY-MM-DD HH:mm:ss") on FIELD_DEFINITION
+directive @date(format: String = "YYYY-MM-DD") on FIELD_DEFINITION
+directive @decimal on FIELD_DEFINITION
+
+scalar JSON
+
+type Query
+type Mutation

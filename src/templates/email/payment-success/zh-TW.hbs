@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>付款成功通知</title>
+</head>
+<body style="margin:0;padding:0;font-family:Arial,sans-serif;background:#f5f5f5;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#f5f5f5;padding:40px 0;">
+    <tr>
+      <td align="center">
+        <table width="600" cellpadding="0" cellspacing="0" style="background:#ffffff;border-radius:8px;overflow:hidden;">
+          <tr>
+            <td style="background:#1a1a1a;padding:32px;text-align:center;">
+              <h1 style="color:#ffffff;margin:0;font-size:24px;">付款成功</h1>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:40px 32px;">
+              <p style="font-size:16px;color:#333;margin:0 0 16px;">親愛的 {{name}} 您好，</p>
+              <p style="font-size:16px;color:#333;margin:0 0 24px;">感謝您的報名，我們已收到您的付款，以下是您的訂單資訊：</p>
+              <table width="100%" cellpadding="0" cellspacing="0" style="border:1px solid #e5e5e5;border-radius:4px;margin:0 0 24px;">
+                <tr style="background:#f9f9f9;">
+                  <td style="padding:12px 16px;font-size:14px;color:#666;width:40%;">訂單編號</td>
+                  <td style="padding:12px 16px;font-size:14px;color:#333;font-weight:bold;">{{orderId}}</td>
+                </tr>
+                <tr>
+                  <td style="padding:12px 16px;font-size:14px;color:#666;border-top:1px solid #e5e5e5;">付款金額</td>
+                  <td style="padding:12px 16px;font-size:14px;color:#333;font-weight:bold;border-top:1px solid #e5e5e5;">NT$ {{amount}}</td>
+                </tr>
+                <tr style="background:#f9f9f9;">
+                  <td style="padding:12px 16px;font-size:14px;color:#666;border-top:1px solid #e5e5e5;">付款狀態</td>
+                  <td style="padding:12px 16px;font-size:14px;color:#22c55e;font-weight:bold;border-top:1px solid #e5e5e5;">付款成功</td>
+                </tr>
+              </table>
+              <p style="font-size:14px;color:#666;margin:0;">如有任何問題，請聯絡我們的客服。</p>
+            </td>
+          </tr>
+          <tr>
+            <td style="background:#f9f9f9;padding:24px 32px;text-align:center;border-top:1px solid #e5e5e5;">
+              <p style="font-size:12px;color:#999;margin:0;">© {{currentYear}} {{env "NEXT_PUBLIC_APP_URL"}}. All rights reserved.</p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>

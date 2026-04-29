@@ -1,37 +1,37 @@
-import Aes from "aes-js";
-import crypto from "crypto";
-import { ulid } from "ulid";
+import Aes from "aes-js"
+import crypto from "crypto"
+import { ulid } from "ulid"
 
 const padding = (str) => {
-  const len = str.length;
-  const pad = 32 - (len % 32);
-  str += String.fromCharCode(pad).repeat(pad);
-  return str;
-};
+  const len = str.length
+  const pad = 32 - (len % 32)
+  str += String.fromCharCode(pad).repeat(pad)
+  return str
+}
 
 const strip_padding = (str) => {
   const pad_check = new RegExp(
-    str.slice(-1) + "{" + str.slice(-1).charCodeAt() + "}",
-  );
+    str.slice(-1) + "{" + str.slice(-1).charCodeAt() + "}"
+  )
   if (str.match(pad_check)) {
-    return str.replace(pad_check, "");
+    return str.replace(pad_check, "")
   } else {
-    return str;
+    return str
   }
-};
+}
 
 const aes_encrypt = (key, iv, data) => {
-  const cbc = new Aes.ModeOfOperation.cbc(Buffer.from(key), Buffer.from(iv));
+  const cbc = new Aes.ModeOfOperation.cbc(Buffer.from(key), Buffer.from(iv))
   return Aes.utils.hex.fromBytes(
-    cbc.encrypt(Aes.utils.utf8.toBytes(padding(data))),
-  );
-};
+    cbc.encrypt(Aes.utils.utf8.toBytes(padding(data)))
+  )
+}
 
 const _newebpay = function (key, iv) {
-  this.key = key;
-  this.iv = iv;
-  this._trade_info = null;
-};
+  this.key = key
+  this.iv = iv
+  this._trade_info = null
+}
 
 /**
  * NewebPay 建構子
@@ -41,8 +41,8 @@ const _newebpay = function (key, iv) {
  * @returns NewebPay instance
  */
 export const newebpay = function (key, iv) {
-  return new _newebpay(key, iv);
-};
+  return new _newebpay(key, iv)
+}
 
 /**
  * 設定交易資料
@@ -51,9 +51,9 @@ export const newebpay = function (key, iv) {
  * @returns {this}
  */
 _newebpay.prototype.TradeInfo = function (data) {
-  this._trade_info = data;
-  return this;
-};
+  this._trade_info = data
+  return this
+}
 
 /**
  * 加密 PostData
@@ -70,9 +70,9 @@ _newebpay.prototype.PostData = function () {
     this.iv,
     typeof this._trade_info === "string"
       ? this._trade_info
-      : new URLSearchParams(this._trade_info).toString(),
-  );
-};
+      : new URLSearchParams(this._trade_info).toString()
+  )
+}
 
 /**
  * 交易資料 AES 加密
@@ -89,9 +89,9 @@ _newebpay.prototype.encrypt = function () {
     this.iv,
     typeof this._trade_info === "string"
       ? this._trade_info
-      : new URLSearchParams(this._trade_info).toString(),
-  );
-};
+      : new URLSearchParams(this._trade_info).toString()
+  )
+}
 
 /**
  * 交易資料 AES 解密
@@ -105,11 +105,11 @@ _newebpay.prototype.encrypt = function () {
 _newebpay.prototype.decrypt = function () {
   const cbc = new Aes.ModeOfOperation.cbc(
     Buffer.from(this.key),
-    Buffer.from(this.iv),
-  );
-  const decryptedBytes = cbc.decrypt(Aes.utils.hex.toBytes(this._trade_info));
-  return strip_padding(Aes.utils.utf8.fromBytes(decryptedBytes));
-};
+    Buffer.from(this.iv)
+  )
+  const decryptedBytes = cbc.decrypt(Aes.utils.hex.toBytes(this._trade_info))
+  return strip_padding(Aes.utils.utf8.fromBytes(decryptedBytes))
+}
 
 /**
  * 交易資料 SHA256 加密
@@ -125,8 +125,8 @@ _newebpay.prototype.TradeSha = function () {
     .createHash("sha256")
     .update(`HashKey=${this.key}&${this._trade_info}&HashIV=${this.iv}`)
     .digest("hex")
-    .toUpperCase();
-};
+    .toUpperCase()
+}
 
 /**
  * 產生 CheckCode
@@ -154,16 +154,16 @@ _newebpay.prototype.TradeSha = function () {
  * @returns {string} SHA256 string
  */
 _newebpay.prototype.CheckCode = function (type) {
-  let str = null;
+  let str = null
   if (type === "winning_request") {
     str = `HashIV=${this.iv}&${this._trade_info}&HashKey=${this.key}`.replace(
       /%20/g,
-      "+",
-    );
+      "+"
+    )
   } else {
-    let hash_iv = { HashIV: this.iv };
+    let hash_iv = { HashIV: this.iv }
     if (type === "invoice_number") {
-      hash_iv = { HashIv: this.iv };
+      hash_iv = { HashIv: this.iv }
     }
     str = new URLSearchParams(
       Object.assign(
@@ -171,14 +171,14 @@ _newebpay.prototype.CheckCode = function (type) {
         Object.keys(this._trade_info)
           .sort()
           .reduce((r, k) => ((r[k] = this._trade_info[k]), r), {}),
-        { HashKey: this.key },
-      ),
+        { HashKey: this.key }
+      )
     )
       .toString()
-      .replace(/%20/g, "+");
+      .replace(/%20/g, "+")
   }
-  return crypto.createHash("sha256").update(str).digest("hex").toUpperCase();
-};
+  return crypto.createHash("sha256").update(str).digest("hex").toUpperCase()
+}
 
 /**
  * 產生 CheckValue
@@ -206,18 +206,18 @@ _newebpay.prototype.CheckCode = function (type) {
  * @returns {string} SHA256 string
  */
 _newebpay.prototype.CheckValue = function (type) {
-  let str = null;
+  let str = null
   if (type === "winning_request") {
     str = `HashKey=${this.key}&${this._trade_info}&HashIV=${this.iv}`.replace(
       /%20/g,
-      "+",
-    );
+      "+"
+    )
   } else {
-    let prefix = { IV: this.iv };
-    let suffix = { Key: this.key };
+    let prefix = { IV: this.iv }
+    let suffix = { Key: this.key }
     if (type === "mpg_gateway") {
-      prefix = { HashKey: this.key };
-      suffix = { HashIV: this.iv };
+      prefix = { HashKey: this.key }
+      suffix = { HashIV: this.iv }
     }
     str = new URLSearchParams(
       Object.assign(
@@ -225,14 +225,14 @@ _newebpay.prototype.CheckValue = function (type) {
         Object.keys(this._trade_info)
           .sort()
           .reduce((r, k) => ((r[k] = this._trade_info[k]), r), {}),
-        suffix,
-      ),
+        suffix
+      )
     )
       .toString()
-      .replace(/%20/g, "+");
+      .replace(/%20/g, "+")
   }
-  return crypto.createHash("sha256").update(str).digest("hex").toUpperCase();
-};
+  return crypto.createHash("sha256").update(str).digest("hex").toUpperCase()
+}
 
 export const generateTradeInfo = (data) => {
   return {
@@ -264,6 +264,8 @@ export const generateTradeInfo = (data) => {
     EZPWECHAT: data.ezpwechatEnabled ? 1 : 0,
     EZPALIPAY: data.ezpalipayEnabled ? 1 : 0,
     LangType: "zh-tw",
+    PayerEmail: data.payerEmail ? data.payerEmail : "",
+    EmailModify: 1,
     ...data,
-  };
-};
+  }
+}

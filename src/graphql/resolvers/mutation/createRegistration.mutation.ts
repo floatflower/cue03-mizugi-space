@@ -92,6 +92,10 @@ export const createRegistrationMutationResolver = async (
     ReturnURL: `${process.env.NEWEBPAY_CALLBACK_URL}/callback/newebpay/client`,
     ItemDesc: `活動購票`,
     creditCardEnabled: true,
+    // applepayEnabled: true,
+    androidpayEnabled: true,
+    samsungpayEnabled: true,
+    payerEmail: email,
   })
 
   const encryptedData = NewebPay.TradeInfo(tradeInfo).encrypt()

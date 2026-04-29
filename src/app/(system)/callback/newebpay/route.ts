@@ -2,6 +2,8 @@ import { createHash } from "crypto"
 import { NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/server/prisma"
 import { newebpay } from "@/server/newebpay/index.js"
+import { mailer } from "@/server/mailer"
+import { renderEmailTemplate } from "@/server/email/render"
 
 export const POST = async (request: NextRequest): Promise<NextResponse> => {
   const body = new URLSearchParams(await request.text())
@@ -57,6 +59,23 @@ export const POST = async (request: NextRequest): Promise<NextResponse> => {
     await prisma.registration.update({
       where: { id: registration.id },
       data: { status: "PAID" },
+    })
+
+    const html = await renderEmailTemplate(
+      "payment-success",
+      registration.email,
+      {
+        name: registration.name,
+        orderId: registration.id,
+        amount: registration.amount,
+      }
+    )
+
+    await mailer.sendMail({
+      from: process.env.MAIL_FROM,
+      to: registration.email,
+      subject: "付款成功通知",
+      html,
     })
   }
 

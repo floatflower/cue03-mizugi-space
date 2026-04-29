@@ -37,7 +37,7 @@ export async function exportRegistrations(email: string) {
       r.registrationSessions.map((rs) => ({
         訂單編號: r.id,
         姓名: r.name,
-        電話: r.phone,
+        電話: "\t" + r.phone,
         Email: r.email,
         報名時段: `${rs.session.date} ${rs.session.startTime}-${rs.session.endTime}`,
         報名時間: r.createdAt.toISOString(),

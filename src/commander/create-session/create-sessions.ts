@@ -1,14 +1,5 @@
-import { PrismaPg } from "@prisma/adapter-pg"
-import { PrismaClient } from "../src/server/prisma/client.js"
 import { ulid } from "ulid"
-
-const adapter = new PrismaPg({
-  connectionString:
-    process.env.DATABASE_URL ||
-    "postgresql://user:password@localhost:39201/db?schema=public",
-})
-
-const prisma = new PrismaClient({ adapter })
+import { prisma } from "@/server/prisma"
 
 const DATES = ["2026-06-13", "2026-06-14"]
 
@@ -23,7 +14,7 @@ const TIME_SLOTS = [
   { startTime: "15:40", endTime: "16:00" },
 ]
 
-async function main() {
+export async function createSessions() {
   const existing = await prisma.session.count()
   if (existing > 0) {
     console.log(`Sessions already seeded (${existing} records). Skipping.`)
@@ -43,10 +34,3 @@ async function main() {
   await prisma.session.createMany({ data: sessions })
   console.log(`✅ Seeded ${sessions.length} sessions.`)
 }
-
-main()
-  .catch((e) => {
-    console.error(e)
-    process.exit(1)
-  })
-  .finally(() => prisma.$disconnect())

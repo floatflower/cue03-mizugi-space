@@ -25,7 +25,7 @@ export const POST = async (request: NextRequest): Promise<NextResponse> => {
   <div class="card">
     <div class="icon">${isSuccess ? "✅" : "❌"}</div>
     <h1>${isSuccess ? "報名成功！" : "付款失敗"}</h1>
-    <p>${isSuccess ? "感謝您的報名，我們將盡快與您確認詳細資訊。請保留此頁面截圖作為紀錄。" : "付款未能完成，請返回重新嘗試。如有疑問請聯繫主辦單位。"}</p>
+    <p>${isSuccess ? "感謝您的報名，我們將會寄送電子郵件給您以供確認。" : "付款未能完成，請返回重新嘗試。如有疑問請聯繫主辦單位。"}</p>
     <a href="/">返回首頁</a>
   </div>
 </body>

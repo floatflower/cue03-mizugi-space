@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useRef } from "react"
+import { useState, useRef, useEffect } from "react"
 import { gql } from "@apollo/client"
 import { useQuery, useMutation } from "@apollo/client/react"
 import { useForm } from "react-hook-form"
@@ -10,6 +10,14 @@ import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
 import useNewebPay from "@/hooks/use-newebpay"
 
 const SESSIONS_QUERY = gql`
@@ -132,8 +140,31 @@ export default function RegistrationFlow() {
   )
   const [selectedIds, setSelectedIds] = useState<string[]>([])
   const [submitError, setSubmitError] = useState<string | null>(null)
+  const [confirmOpen, setConfirmOpen] = useState(false)
+  const [scrolledToBottom, setScrolledToBottom] = useState(false)
+  const [pendingFormData, setPendingFormData] = useState<FormData | null>(null)
+  const rulesScrollRef = useRef<HTMLDivElement>(null)
   const pendingPayment = useRef(false)
   const { submitTransaction } = useNewebPay()
+
+  useEffect(() => {
+    if (!confirmOpen) return
+    setScrolledToBottom(false)
+    const t = setTimeout(() => {
+      const el = rulesScrollRef.current
+      if (el && el.scrollHeight <= el.clientHeight + 4) {
+        setScrolledToBottom(true)
+      }
+    }, 50)
+    return () => clearTimeout(t)
+  }, [confirmOpen])
+
+  const handleRulesScroll = (e: React.UIEvent<HTMLDivElement>) => {
+    const el = e.currentTarget
+    if (el.scrollHeight - el.scrollTop - el.clientHeight < 4) {
+      setScrolledToBottom(true)
+    }
+  }
 
   const { data, loading: sessionsLoading } = useQuery<{ sessions: Session[] }>(
     SESSIONS_QUERY,
@@ -178,9 +209,18 @@ export default function RegistrationFlow() {
     )
   }
 
-  const onSubmit = async (formData: FormData) => {
+  const openConfirmDialog = (formData: FormData) => {
+    setSubmitError(null)
+    setPendingFormData(formData)
+    setConfirmOpen(true)
+  }
+
+  const submitPayment = async () => {
+    if (!pendingFormData) return
+    const formData = pendingFormData
     setSubmitError(null)
     pendingPayment.current = true
+    setConfirmOpen(false)
 
     try {
       const { data: result } = await createRegistration({
@@ -268,6 +308,7 @@ export default function RegistrationFlow() {
               ) : (
                 <div className="space-y-3">
                   {HOURS.map((hour, hourIndex) => {
+                    if (hour === "11") return null
                     const hourSessions = sessionsByHour[hour]
                     if (!hourSessions?.length) return null
                     const folder = activeDate === "2026-06-13" ? "0613" : "0614"
@@ -288,10 +329,51 @@ export default function RegistrationFlow() {
 
                         {/* Sessions */}
                         <div className="flex flex-1 flex-col justify-between gap-3 p-4">
-                          <p className="text-xs text-muted-foreground">
-                            {hour}:00 –{" "}
-                            {String(parseInt(hour) + 1).padStart(2, "0")}:00
-                          </p>
+                          <div>
+                            <p className="text-xs text-muted-foreground">
+                              {hour}:00 –{" "}
+                              {String(parseInt(hour) + 1).padStart(2, "0")}:00
+                            </p>
+                            {hour === "13" && (
+                              <div className="mt-1 text-sm">
+                                <p className="font-bold">芯羽＊りか</p>
+                                <a
+                                  href="https://www.instagram.com/linn_rika"
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="text-muted-foreground underline hover:text-foreground"
+                                >
+                                  @linn_rika
+                                </a>
+                              </div>
+                            )}
+                            {hour === "14" && (
+                              <div className="mt-1 text-sm">
+                                <p className="font-bold">瀞諠Selina</p>
+                                <a
+                                  href="https://www.instagram.com/cbr500r_chin_yi"
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="text-muted-foreground underline hover:text-foreground"
+                                >
+                                  @cbr500r_chin_yi
+                                </a>
+                              </div>
+                            )}
+                            {hour === "15" && (
+                              <div className="mt-1 text-sm">
+                                <p className="font-bold">禹兒</p>
+                                <a
+                                  href="https://www.instagram.com/aprilpeach13_"
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="text-muted-foreground underline hover:text-foreground"
+                                >
+                                  @aprilpeach13_
+                                </a>
+                              </div>
+                            )}
+                          </div>
                           <div className="grid grid-cols-2 gap-2">
                             {hourSessions.map((session) => {
                               const selected = selectedIds.includes(session.id)
@@ -399,7 +481,10 @@ export default function RegistrationFlow() {
 
         {/* ── Step 2: 填寫資料 ── */}
         {step === 2 && (
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
+          <form
+            onSubmit={handleSubmit(openConfirmDialog)}
+            className="space-y-8"
+          >
             {/* Order Summary */}
             <div className="rounded-xl border border-border p-4">
               <p className="mb-3 text-sm font-medium">已選擇的梯次</p>
@@ -503,6 +588,105 @@ export default function RegistrationFlow() {
           </form>
         )}
       </div>
+
+      <Dialog open={confirmOpen} onOpenChange={setConfirmOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>活動規範</DialogTitle>
+            <DialogDescription>
+              請仔細閱讀以下活動規範，閱讀完畢後方可確認付款
+            </DialogDescription>
+          </DialogHeader>
+
+          <div
+            ref={rulesScrollRef}
+            onScroll={handleRulesScroll}
+            className="max-h-72 overflow-y-auto rounded-md border border-border bg-muted/20 p-4 text-xs/relaxed"
+          >
+            <ol className="list-decimal space-y-2 pl-4">
+              <li>
+                <strong className="font-bold">完成繳費後恕不接受退費</strong>
+                。如需將名額轉讓他人，請於活動前透過{" "}
+                <strong className="font-bold">
+                  Instagram、X 或 Discord 私訊聯繫我們
+                </strong>
+                ，由主辦方協助辦理變更手續。
+              </li>
+              <li>
+                每梯次拍攝時間為 <strong className="font-bold">20 分鐘</strong>
+                ，請於梯次開始前{" "}
+                <strong className="font-bold">10 分鐘抵達現場完成報到</strong>
+                。若有遲到情形，
+                <strong className="font-bold">
+                  將不另行延長拍攝時間，亦無法更換至其他梯次
+                </strong>
+                。
+              </li>
+              <li>
+                拍攝期間請尊重同梯次的其他攝影師與模特，
+                <strong className="font-bold">
+                  嚴禁任何形式的肢體接觸、不當言語或騷擾行為
+                </strong>
+                。違反者將立即終止其參與資格且不予退費，
+                <strong className="font-bold">
+                  主辦方將報警處理並全力配合警方偵查
+                </strong>
+                。
+              </li>
+              <li>
+                拍攝所得之照片僅限個人作品集或社群分享等非商業性質使用，
+                <strong className="font-bold">不得用於任何商業用途</strong>
+                。如需商業使用，請事先取得模特與主辦方之書面同意。
+              </li>
+              <li>
+                若因不可抗力因素（如天災、疫情、場地問題等）導致活動延期或取消，主辦方將另行公告處理方式。
+              </li>
+              <li>
+                報到時請主動出示
+                <strong className="font-bold">附有照片之身分證件</strong>
+                （如身分證、駕照或護照），以核對本人身分與報名者一致，並
+                <strong className="font-bold">確認年齡已滿 18 歲</strong>
+                ；無法提供者將
+                <strong className="font-bold">不得入場且不予退費</strong>。
+              </li>
+              <li>
+                統一發票將於
+                <strong className="font-bold">
+                  活動當天完成報到後現場交付
+                </strong>
+                ，請務必親自領取。
+              </li>
+              <li>
+                報名即視為
+                <strong className="font-bold">同意以上所有規範</strong>
+                ，主辦方保有活動細節最終解釋與調整之權利。
+              </li>
+            </ol>
+          </div>
+
+          <DialogFooter className="flex-row items-center justify-between gap-3 sm:justify-between">
+            <div className="text-sm font-semibold">
+              合計 NT${total.toLocaleString()}
+            </div>
+            <div className="flex flex-col items-end gap-1">
+              <Button
+                size="lg"
+                onClick={submitPayment}
+                disabled={!scrolledToBottom || submitting}
+              >
+                {submitting
+                  ? "處理中..."
+                  : scrolledToBottom
+                    ? "確認付款"
+                    : "請閱讀至底部"}
+              </Button>
+              <p className="text-[0.625rem] text-muted-foreground">
+                將轉跳至藍新金流進行付款
+              </p>
+            </div>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

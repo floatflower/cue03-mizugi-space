@@ -612,6 +612,7 @@ export default function RegistrationFlow() {
                 </strong>
                 ，由主辦方協助辦理變更手續。
               </li>
+
               <li>
                 每梯次拍攝時間為 <strong className="font-bold">20 分鐘</strong>
                 ，請於梯次開始前{" "}
@@ -622,10 +623,11 @@ export default function RegistrationFlow() {
                 </strong>
                 。
               </li>
+
               <li>
                 拍攝期間請尊重同梯次的其他攝影師與模特，
                 <strong className="font-bold">
-                  嚴禁任何形式的肢體接觸、不當言語或騷擾行為
+                  嚴禁任何形式的肢體接觸、不當言語、騷擾或影響活動秩序之行為
                 </strong>
                 。違反者將立即終止其參與資格且不予退費，
                 <strong className="font-bold">
@@ -633,14 +635,36 @@ export default function RegistrationFlow() {
                 </strong>
                 。
               </li>
+
+              <li>
+                活動期間可進行錄影， 但
+                <strong className="font-bold">
+                  禁止任何形式之直播、偷拍或未經同意拍攝其他參加者
+                </strong>
+                之行為。
+              </li>
+
               <li>
                 拍攝所得之照片僅限個人作品集或社群分享等非商業性質使用，
                 <strong className="font-bold">不得用於任何商業用途</strong>
-                。如需商業使用，請事先取得模特與主辦方之書面同意。
+                。包含但不限於販售、商業宣傳、深度偽造（Deepfake）或其他二次生成用途。
+                如需商業使用，請事先取得模特與主辦方之書面同意。
               </li>
+
               <li>
-                若因不可抗力因素（如天災、疫情、場地問題等）導致活動延期或取消，主辦方將另行公告處理方式。
+                活動照片可公開於個人社群平台或作品集， 但
+                <strong className="font-bold">
+                  不得惡意修圖、冒用模特名義、散布不實內容或用於違反公序良俗之用途
+                </strong>
+                。
               </li>
+
+              <li>
+                若因不可抗力因素（如天災、疫情、場地問題、政府政策等）導致活動延期或取消，
+                <strong className="font-bold">主辦方將另行公告處理方式</strong>
+                。
+              </li>
+
               <li>
                 報到時請主動出示
                 <strong className="font-bold">附有照片之身分證件</strong>
@@ -649,6 +673,20 @@ export default function RegistrationFlow() {
                 ；無法提供者將
                 <strong className="font-bold">不得入場且不予退費</strong>。
               </li>
+
+              <li>
+                請妥善保管個人物品與攝影器材，如有遺失、損壞或因個人行為導致之意外，
+                <strong className="font-bold">主辦方概不負責</strong>。
+              </li>
+
+              <li>
+                若參加者有影響活動秩序、安全或他人權益之行為，
+                <strong className="font-bold">
+                  主辦方有權拒絕其入場或中止其參與資格，且不予退費
+                </strong>
+                。
+              </li>
+
               <li>
                 統一發票將於
                 <strong className="font-bold">
@@ -656,10 +694,12 @@ export default function RegistrationFlow() {
                 </strong>
                 ，請務必親自領取。
               </li>
+
               <li>
                 報名即視為
                 <strong className="font-bold">同意以上所有規範</strong>
-                ，主辦方保有活動細節最終解釋與調整之權利。
+                ，主辦方保有活動流程、梯次安排、服裝內容與活動細節之
+                <strong className="font-bold">最終解釋與調整權利</strong>。
               </li>
             </ol>
           </div>

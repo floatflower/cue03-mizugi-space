@@ -667,6 +667,12 @@ export default function RegistrationFlow() {
               </li>
 
               <li>
+                本活動
+                <strong className="font-bold">不限攝影器材</strong>
+                ，不論使用手機或相機皆可參與拍攝。
+              </li>
+
+              <li>
                 拍攝所得之照片僅限個人作品集或社群分享等非商業性質使用，
                 <strong className="font-bold">不得用於任何商業用途</strong>
                 。包含但不限於販售、商業宣傳、深度偽造（Deepfake）或其他二次生成用途。
@@ -715,6 +721,28 @@ export default function RegistrationFlow() {
                   活動當天完成報到後現場交付
                 </strong>
                 ，請務必親自領取。
+              </li>
+
+              <li>
+                凡完成線上報名繳費者，將獲贈
+                <strong className="font-bold">青瀬ひより壓克力立牌乙個</strong>
+                ，於活動當天報到時隨發票一同交付。
+              </li>
+
+              <li>
+                <strong className="font-bold">
+                  本活動票券不包含 CUE03 門票
+                </strong>
+                ，請至{" "}
+                <a
+                  href="https://cucu.one/events/cue-03/tickets"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-bold underline underline-offset-2 hover:text-foreground"
+                >
+                  https://cucu.one/events/cue-03/tickets
+                </a>{" "}
+                購買展場門票。
               </li>
 
               <li>

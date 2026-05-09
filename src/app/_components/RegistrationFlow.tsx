@@ -188,7 +188,11 @@ export default function RegistrationFlow() {
   const sessions = data?.sessions ?? []
   const filteredSessions = sessions.filter((s) => s.date === activeDate)
   const selectedSessions = sessions.filter((s) => selectedIds.includes(s.id))
-  const total = selectedIds.length * 600
+  const sessionCount = selectedIds.length
+  const freeCount = Math.floor(sessionCount / 3)
+  const subtotal = sessionCount * 600
+  const discount = freeCount * 600
+  const total = subtotal - discount
 
   const sessionsByHour = HOURS.reduce(
     (acc, hour) => {
@@ -521,9 +525,21 @@ export default function RegistrationFlow() {
                   </div>
                 ))}
               </div>
-              <div className="mt-3 flex justify-between border-t border-border pt-3 text-sm font-semibold">
-                <span>合計</span>
-                <span>NT${total.toLocaleString()}</span>
+              <div className="mt-3 space-y-1.5 border-t border-border pt-3 text-sm">
+                <div className="flex justify-between text-muted-foreground">
+                  <span>小計</span>
+                  <span>NT${subtotal.toLocaleString()}</span>
+                </div>
+                {freeCount > 0 && (
+                  <div className="flex justify-between text-primary">
+                    <span>買二送一優惠（{freeCount} 個免費）</span>
+                    <span>−NT${discount.toLocaleString()}</span>
+                  </div>
+                )}
+                <div className="flex justify-between pt-1.5 font-semibold">
+                  <span>合計</span>
+                  <span>NT${total.toLocaleString()}</span>
+                </div>
               </div>
             </div>
 

@@ -7,6 +7,11 @@ import { newebpay, generateTradeInfo } from "@/server/newebpay/index.js"
 
 const PRICE_PER_SESSION = 600
 
+const calculateAmount = (count: number) => {
+  const freeCount = Math.floor(count / 3)
+  return (count - freeCount) * PRICE_PER_SESSION
+}
+
 export interface ICreateRegistrationMutationArgs {
   data: {
     name: string
@@ -66,7 +71,7 @@ export const createRegistrationMutationResolver = async (
         name,
         phone,
         email,
-        amount: PRICE_PER_SESSION * sessionIds.length,
+        amount: calculateAmount(sessionIds.length),
         status: "PENDING",
         registrationSessions: {
           create: sessionIds.map((sessionId) => ({

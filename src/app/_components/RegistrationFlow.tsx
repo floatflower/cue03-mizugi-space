@@ -189,9 +189,9 @@ export default function RegistrationFlow() {
   const filteredSessions = sessions.filter((s) => s.date === activeDate)
   const selectedSessions = sessions.filter((s) => selectedIds.includes(s.id))
   const sessionCount = selectedIds.length
-  const freeCount = Math.floor(sessionCount / 3)
+  const discountedCount = Math.floor(sessionCount / 3)
   const subtotal = sessionCount * 600
-  const discount = freeCount * 600
+  const discount = discountedCount * 240
   const total = subtotal - discount
 
   const sessionsByHour = HOURS.reduce(
@@ -530,9 +530,9 @@ export default function RegistrationFlow() {
                   <span>小計</span>
                   <span>NT${subtotal.toLocaleString()}</span>
                 </div>
-                {freeCount > 0 && (
+                {discountedCount > 0 && (
                   <div className="flex justify-between text-primary">
-                    <span>買二送一優惠（{freeCount} 個免費）</span>
+                    <span>第三梯 6 折優惠（{discountedCount} 個折扣）</span>
                     <span>−NT${discount.toLocaleString()}</span>
                   </div>
                 )}

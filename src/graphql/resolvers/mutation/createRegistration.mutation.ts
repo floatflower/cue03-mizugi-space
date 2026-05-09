@@ -8,8 +8,11 @@ import { newebpay, generateTradeInfo } from "@/server/newebpay/index.js"
 const PRICE_PER_SESSION = 600
 
 const calculateAmount = (count: number) => {
-  const freeCount = Math.floor(count / 3)
-  return (count - freeCount) * PRICE_PER_SESSION
+  const discountedCount = Math.floor(count / 3)
+  const normalCount = count - discountedCount
+  return (
+    normalCount * PRICE_PER_SESSION + discountedCount * PRICE_PER_SESSION * 0.6
+  )
 }
 
 export interface ICreateRegistrationMutationArgs {
